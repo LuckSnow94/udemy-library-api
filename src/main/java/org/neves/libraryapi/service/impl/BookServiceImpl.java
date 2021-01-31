@@ -1,5 +1,6 @@
 package org.neves.libraryapi.service.impl;
 
+import org.neves.libraryapi.exception.BusinessException;
 import org.neves.libraryapi.model.entity.Book;
 import org.neves.libraryapi.model.repository.BookRepository;
 import org.neves.libraryapi.service.BookService;
@@ -16,6 +17,8 @@ public class BookServiceImpl implements BookService {
 
     @Override
     public Book save(Book book) {
+        if(repository.existsByIsbn(book.getIsbn()))
+            throw new BusinessException("Isbn já cadastrado.");
         return repository.save(book);
     }
 

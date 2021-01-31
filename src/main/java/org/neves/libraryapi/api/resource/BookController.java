@@ -3,6 +3,7 @@ package org.neves.libraryapi.api.resource;
 import org.modelmapper.ModelMapper;
 import org.neves.libraryapi.api.dto.BookDTO;
 import org.neves.libraryapi.api.exception.ApiErrors;
+import org.neves.libraryapi.exception.BusinessException;
 import org.neves.libraryapi.model.entity.Book;
 import org.neves.libraryapi.service.BookService;
 import org.springframework.http.HttpStatus;
@@ -37,5 +38,11 @@ public class BookController {
     public ApiErrors handleValidationExceptions(MethodArgumentNotValidException exception){
         BindingResult bindingResult = exception.getBindingResult();
         return new ApiErrors(bindingResult);
+    }
+
+    @ExceptionHandler(BusinessException.class)
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
+    public ApiErrors handleBusinessExceptions(BusinessException exception){
+        return new ApiErrors(exception);
     }
 }
