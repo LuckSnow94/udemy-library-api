@@ -51,7 +51,7 @@ public class BookServiceTest {
 
     @Test
     @DisplayName("Deve lançar erro de negócio ao tentar salvar livro com isbn duplicado")
-    public void shouldNotSaveBookWithDuplicateISBN(){
+    public void shouldNotSaveBookWithDuplicateIsbn(){
         Book book = createValidBook();
         Mockito.when(repository.existsByIsbn(book.getIsbn()))
                 .thenReturn(true);
