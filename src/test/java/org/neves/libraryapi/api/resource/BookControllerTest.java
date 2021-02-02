@@ -33,7 +33,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @AutoConfigureMockMvc
 @ActiveProfiles("test")
 @ExtendWith(SpringExtension.class)
-public class BookControllerTest<createBookWithDuplicatedIsbn> {
+public class BookControllerTest {
 
     private static final String BOOK_API = "/api/books";
 
