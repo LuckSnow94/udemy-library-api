@@ -14,6 +14,8 @@ import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 
+import java.util.Optional;
+
 import static org.assertj.core.api.Assertions.assertThat;
 
 @ActiveProfiles("test")
@@ -26,14 +28,14 @@ public class BookServiceTest {
     private BookRepository repository;
 
     @BeforeEach
-    public void setUp(){
+    public void setUp() {
         this.service = new BookServiceImpl(repository);
     }
 
     @Test
     @DisplayName("Deve salvar um livro")
-    public void saveBookTest(){
-        Book book = createValidBook();
+    public void saveBookTest() {
+        Book book = createValidBook(1L);
         Mockito.when(repository.existsByIsbn(Mockito.anyString()))
                 .thenReturn(false);
         Mockito.when(repository.save(book))
@@ -42,7 +44,9 @@ public class BookServiceTest {
                         .isbn(book.getIsbn())
                         .title(book.getTitle())
                         .author(book.getAuthor()).build());
+
         Book savedBook = service.save(book);
+
         assertThat(savedBook.getId()).isNotNull();
         assertThat(savedBook.getIsbn()).isEqualTo(book.getIsbn());
         assertThat(savedBook.getAuthor()).isEqualTo(book.getAuthor());
@@ -51,8 +55,8 @@ public class BookServiceTest {
 
     @Test
     @DisplayName("Deve lançar erro de negócio ao tentar salvar livro com isbn duplicado")
-    public void shouldNotSaveBookWithDuplicateIsbn(){
-        Book book = createValidBook();
+    public void shouldNotSaveBookWithDuplicateIsbnTest() {
+        Book book = createValidBook(1L);
         Mockito.when(repository.existsByIsbn(book.getIsbn()))
                 .thenReturn(true);
 
@@ -64,8 +68,38 @@ public class BookServiceTest {
         Mockito.verify(repository, Mockito.never()).save(book);
     }
 
-    private Book createValidBook() {
-        return Book.builder().title("Meu livro").author("Autor").isbn("777").build();
+    @Test
+    @DisplayName("Deve obter um livro pelo id")
+    public void getByIdTest() {
+        Long id = 1L;
+        Book book = createValidBook(id);
+        Mockito.when(repository.findById(id))
+                .thenReturn(Optional.of(book));
+
+        Optional<Book> optionalBook = service.getById(id);
+
+        assertThat(optionalBook.isPresent()).isTrue();
+        Book wantedBook = optionalBook.get();
+        assertThat(wantedBook.getId()).isEqualTo(id);
+        assertThat(wantedBook.getIsbn()).isEqualTo(book.getIsbn());
+        assertThat(wantedBook.getAuthor()).isEqualTo(book.getAuthor());
+        assertThat(wantedBook.getTitle()).isEqualTo(book.getTitle());
+    }
+
+    @Test
+    @DisplayName("Deve retornar vazio ao obter um livro não existente")
+    public void bookNotFoundByIdTest() {
+        Long id = 1L;
+        Mockito.when(repository.findById(id))
+                .thenReturn(Optional.empty());
+
+        Optional<Book> optionalBook = service.getById(id);
+
+        assertThat(optionalBook.isPresent()).isFalse();
+    }
+
+    private Book createValidBook(Long id) {
+        return Book.builder().id(id).title("Meu livro").author("Autor").isbn("777").build();
     }
 
 }

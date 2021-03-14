@@ -181,7 +181,7 @@ public class BookControllerTest {
                 .given(service.getById(id))
                 .willReturn(Optional.of(updatingBook));
 
-        Book updatedBook = Book.builder().title("Meu livro").author("Jounin").isbn("777").id(id).build();
+        Book updatedBook = Book.builder().title("Meu livro").author("Chunin").isbn("777").id(id).build();
         updatedBook.setTitle(dto.getTitle());
         updatedBook.setAuthor(dto.getAuthor());
         BDDMockito
