@@ -10,6 +10,9 @@ import org.springframework.boot.test.autoconfigure.orm.jpa.TestEntityManager;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 
+import java.util.Optional;
+
+import static org.assertj.core.api.Assertions.as;
 import static org.assertj.core.api.Assertions.assertThat;
 
 @DataJpaTest
@@ -45,7 +48,19 @@ public class BookRepositoryTest {
         assertThat(exists).isFalse();
     }
 
+    @Test
+    @DisplayName("Deve obter um livro por id")
+    public void findByIdTest(){
+        Book book = createValidBookWithIsbn("777");
+        entityManager.persist(book);
+
+        Optional<Book> foundBook = repository.findById(book.getId());
+
+        assertThat(foundBook.isPresent()).isTrue();
+    }
+
     private Book createValidBookWithIsbn(String isbn) {
         return Book.builder().title("Meu livro").author("Autor").isbn(isbn).build();
     }
+
 }
