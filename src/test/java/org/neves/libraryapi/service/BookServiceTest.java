@@ -98,6 +98,16 @@ public class BookServiceTest {
         assertThat(optionalBook.isPresent()).isFalse();
     }
 
+    @Test
+    @DisplayName("Deve deletar um livro com sucesso")
+    public void deleteBookTest(){
+        Book book = createValidBook(1L);
+
+        service.delete(book);
+
+        Mockito.verify(repository, Mockito.only()).delete(book);
+    }
+
     private Book createValidBook(Long id) {
         return Book.builder().id(id).title("Meu livro").author("Autor").isbn("777").build();
     }
